@@ -8,38 +8,38 @@ Welcome to the [Paddle.com](http://www.paddle.com/) Node.js SDK documentation.
 **Kind**: global class  
 
 * [PaddleSDK](#PaddleSDK)
-    * [new PaddleSDK(vendorID, apiKey, [publicKey], [options])](#new_PaddleSDK_new)
+    * [new PaddleSDK(vendorId, authCode, [publicKey], [options])](#new_PaddleSDK_new)
     * [.getProducts()](#PaddleSDK+getProducts) ⇒ <code>Promise</code>
-    * [.getProductCoupons(productID)](#PaddleSDK+getProductCoupons) ⇒ <code>Promise</code>
-    * [.getProductPlans(productID)](#PaddleSDK+getProductPlans) ⇒ <code>Promise</code>
-    * [.getPlanUsers(planID)](#PaddleSDK+getPlanUsers) ⇒ <code>Promise</code>
-    * [.getPlanPayments(planID)](#PaddleSDK+getPlanPayments) ⇒ <code>Promise</code>
-    * [.getWebhooksHistory()](#PaddleSDK+getWebhooksHistory) ⇒ <code>Promise</code>
-    * [.getUserTransactions(userID)](#PaddleSDK+getUserTransactions) ⇒ <code>Promise</code>
-    * [.getSubscriptionTransactions(subscriptionID)](#PaddleSDK+getSubscriptionTransactions) ⇒ <code>Promise</code>
-    * [.getOrderTransactions(orderID)](#PaddleSDK+getOrderTransactions) ⇒ <code>Promise</code>
+    * [.getProductCoupons(productId)](#PaddleSDK+getProductCoupons) ⇒ <code>Promise</code>
+    * [.getProductPlans([plan])](#PaddleSDK+getProductPlans) ⇒ <code>Promise</code>
+    * [.getPlanUsers([filter], [pagination])](#PaddleSDK+getPlanUsers) ⇒ <code>Promise</code>
+    * [.getPlanPayments([filter])](#PaddleSDK+getPlanPayments) ⇒ <code>Promise</code>
+    * [.getWebhooksHistory([pagination])](#PaddleSDK+getWebhooksHistory) ⇒ <code>Promise</code>
+    * [.getUserTransactions(userId)](#PaddleSDK+getUserTransactions) ⇒ <code>Promise</code>
+    * [.getSubscriptionTransactions(subscriptionId)](#PaddleSDK+getSubscriptionTransactions) ⇒ <code>Promise</code>
+    * [.getOrderTransactions(orderId)](#PaddleSDK+getOrderTransactions) ⇒ <code>Promise</code>
     * [.getCheckoutTransactions(checkoutID)](#PaddleSDK+getCheckoutTransactions) ⇒ <code>Promise</code>
     * [.verifyWebhookData(postData)](#PaddleSDK+verifyWebhookData) ⇒ <code>boolean</code>
-    * [.updateSubscriptionPlan(subscriptionID, planID, prorate)](#PaddleSDK+updateSubscriptionPlan) ⇒ <code>Promise</code>
-    * [.cancelSubscription(subscriptionID)](#PaddleSDK+cancelSubscription) ⇒ <code>Promise</code>
+    * [.updateSubscriptionPlan(subscriptionId, planId, prorate)](#PaddleSDK+updateSubscriptionPlan) ⇒ <code>Promise</code>
+    * [.cancelSubscription(subscriptionId)](#PaddleSDK+cancelSubscription) ⇒ <code>Promise</code>
     * [.generatePayLink(body)](#PaddleSDK+generatePayLink) ⇒ <code>Promise</code>
 
 <a name="new_PaddleSDK_new"></a>
 
-### new PaddleSDK(vendorID, apiKey, [publicKey], [options])
+### new PaddleSDK(vendorId, authCode, [publicKey], [options])
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| vendorID | <code>string</code> |  | The vendor ID for a Paddle account |
-| apiKey | <code>string</code> |  | The API key for a Paddle account |
+| vendorId | <code>string</code> |  | The vendor ID for a Paddle account |
+| authCode | <code>string</code> |  | The Auth Code for a Paddle account |
 | [publicKey] | <code>string</code> |  | The public key for a Paddle account used to verify webhooks, only required for `verifyWebhookData` |
 | [options] | <code>object</code> |  |  |
 | [options.server] | <code>string</code> | <code>&quot;vendors.paddle.com/api/2.0&quot;</code> | The server URL prefix for all requests |
 
 **Example**  
 ```js
-const client = new PaddleSDK('your-vendor-id', 'your-unique-api-key');
-const client = new PaddleSDK('your-vendor-id', 'your-unique-api-key', 'your-public-key');
+const client = new PaddleSDK('your-vendor-id', 'your-auth-code');
+const client = new PaddleSDK('your-vendor-id', 'your-auth-code', 'your-public-key');
 ```
 <a name="PaddleSDK+getProducts"></a>
 
@@ -54,15 +54,15 @@ const products = await client.getProducts();
 ```
 <a name="PaddleSDK+getProductCoupons"></a>
 
-### client.getProductCoupons(productID) ⇒ <code>Promise</code>
+### client.getProductCoupons(productId) ⇒ <code>Promise</code>
 Get the current list of coupons for a product
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
 **Fulfil**: <code>object</code> - The coupons list  
 
-| Param | Type |
-| --- | --- |
-| productID | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| productId | <code>number</code> | The specific product/subscription ID. |
 
 **Example**  
 ```js
@@ -70,15 +70,15 @@ const coupons = await client.getProductCoupons(123);
 ```
 <a name="PaddleSDK+getProductPlans"></a>
 
-### client.getProductPlans(productID) ⇒ <code>Promise</code>
+### client.getProductPlans([plan]) ⇒ <code>Promise</code>
 Get the current list of plans for a subscription
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
 **Fulfil**: <code>object</code> - The plans list  
 
-| Param | Type |
-| --- | --- |
-| productID | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| [plan] | <code>number</code> | Filter: The product/plan ID |
 
 **Example**  
 ```js
@@ -86,31 +86,43 @@ const plans = await client.getProductPlans(123);
 ```
 <a name="PaddleSDK+getPlanUsers"></a>
 
-### client.getPlanUsers(planID) ⇒ <code>Promise</code>
+### client.getPlanUsers([filter], [pagination]) ⇒ <code>Promise</code>
 Get the current list of users for a subscription plan
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
 **Fulfil**: <code>object</code> - The users list  
 
-| Param | Type |
-| --- | --- |
-| planID | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| [filter] |  |  |
+| [filter.subscriptionId] | <code>number</code> | A specific user subscription ID |
+| [filter.planId] | <code>number</code> | The subscription plan ID |
+| [filter.state] | <code>&#x27;active&#x27;</code> \| <code>&#x27;past due&#x27;</code> \| <code>&#x27;trialling&#x27;</code> \| <code>&#x27;paused&#x27;</code> | The user subscription status. Returns all active, past due, trialling and paused subscription plans if not specified. |
+| [pagination] |  |  |
+| [pagination.page] | <code>number</code> | Paginate return results |
+| [pagination.resultPerPage] | <code>number</code> | Number of subscription records to return per page. |
 
 **Example**  
 ```js
-const users = await client.getPlanUsers(123);
+const users = await client.getPlanUsers({subscriptionId: 123});
 ```
 <a name="PaddleSDK+getPlanPayments"></a>
 
-### client.getPlanPayments(planID) ⇒ <code>Promise</code>
+### client.getPlanPayments([filter]) ⇒ <code>Promise</code>
 Get the list of payments for a subscription plan
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
 **Fulfil**: <code>object</code> - The payments list  
 
-| Param | Type |
-| --- | --- |
-| planID | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| [filter] |  |  |
+| [filter.subscriptionId] | <code>number</code> |  |
+| [filter.plan] | <code>number</code> |  |
+| [filter.isPaid] | <code>0</code> \| <code>1</code> | Filter: Payment is paid (0 = No, 1 = Yes) |
+| [filter.from] | <code>string</code> | Filter: Payments starting from (date in format YYYY-MM-DD) |
+| [filter.to] | <code>string</code> | Filter: Payments up to (date in format YYYY-MM-DD) |
+| [filter.isOneOffCharge] | <code>boolean</code> |  |
 
 **Example**  
 ```js
@@ -118,18 +130,26 @@ const payments = await client.getPlanPayments(123);
 ```
 <a name="PaddleSDK+getWebhooksHistory"></a>
 
-### client.getWebhooksHistory() ⇒ <code>Promise</code>
+### client.getWebhooksHistory([pagination]) ⇒ <code>Promise</code>
 Get the list of webhooks history
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
 **Fulfil**: <code>object</code> - The webhooks history list  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [pagination] |  |  |
+| [pagination.page] | <code>number</code> | Paginate returned results |
+| [pagination.alertPerPage] | <code>string</code> | Number of webhook records to return per page |
+| [pagination.queryHead] | <code>string</code> | The date-time from which to begin the history |
+
 **Example**  
 ```js
 const webhooksHistory = await client.getWebhooksHistory();
 ```
 <a name="PaddleSDK+getUserTransactions"></a>
 
-### client.getUserTransactions(userID) ⇒ <code>Promise</code>
+### client.getUserTransactions(userId) ⇒ <code>Promise</code>
 Get the list of transations for a user
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
@@ -137,7 +157,7 @@ Get the list of transations for a user
 
 | Param | Type |
 | --- | --- |
-| userID | <code>number</code> | 
+| userId | <code>number</code> | 
 
 **Example**  
 ```js
@@ -145,7 +165,7 @@ const userTransactions = await client.getUserTransactions(123);
 ```
 <a name="PaddleSDK+getSubscriptionTransactions"></a>
 
-### client.getSubscriptionTransactions(subscriptionID) ⇒ <code>Promise</code>
+### client.getSubscriptionTransactions(subscriptionId) ⇒ <code>Promise</code>
 Get the list of transations for a subscription
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
@@ -153,7 +173,7 @@ Get the list of transations for a subscription
 
 | Param | Type |
 | --- | --- |
-| subscriptionID | <code>number</code> | 
+| subscriptionId | <code>number</code> | 
 
 **Example**  
 ```js
@@ -161,7 +181,7 @@ const subscriptionTransactions = await client.getSubscriptionTransactions(123);
 ```
 <a name="PaddleSDK+getOrderTransactions"></a>
 
-### client.getOrderTransactions(orderID) ⇒ <code>Promise</code>
+### client.getOrderTransactions(orderId) ⇒ <code>Promise</code>
 Get the list of transations for an order
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
@@ -169,7 +189,7 @@ Get the list of transations for an order
 
 | Param | Type |
 | --- | --- |
-| orderID | <code>number</code> | 
+| orderId | <code>number</code> | 
 
 **Example**  
 ```js
@@ -207,14 +227,14 @@ For more details: https://paddle.com/docs/reference-verifying-webhooks
 
 **Example**  
 ```js
-const client = new PaddleSDK('your-vendor-id', 'your-unique-api-key', 'your-public-key');
+const client = new PaddleSDK('your-vendor-id', 'your-auth-code', 'your-public-key');
 
 // inside an Express handler which uses express.bodyParser middleware
 const isVerified = client.verifyWebhookData(req.body);
 ```
 <a name="PaddleSDK+updateSubscriptionPlan"></a>
 
-### client.updateSubscriptionPlan(subscriptionID, planID, prorate) ⇒ <code>Promise</code>
+### client.updateSubscriptionPlan(subscriptionId, planId, prorate) ⇒ <code>Promise</code>
 Update (upgrade/downgrade) the plan of a subscription
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
@@ -222,8 +242,8 @@ Update (upgrade/downgrade) the plan of a subscription
 
 | Param | Type | Default |
 | --- | --- | --- |
-| subscriptionID | <code>number</code> |  | 
-| planID | <code>number</code> |  | 
+| subscriptionId | <code>number</code> |  | 
+| planId | <code>number</code> |  | 
 | prorate | <code>boolean</code> | <code>false</code> | 
 
 **Example**  
@@ -232,15 +252,15 @@ const result = await client.updateSubscriptionPlan(123);
 ```
 <a name="PaddleSDK+cancelSubscription"></a>
 
-### client.cancelSubscription(subscriptionID) ⇒ <code>Promise</code>
+### client.cancelSubscription(subscriptionId) ⇒ <code>Promise</code>
 Cancels an active subscription
 
 **Kind**: instance method of [<code>PaddleSDK</code>](#PaddleSDK)  
 **Fulfil**: <code>object</code> - The result of the operation  
 
-| Param | Type |
-| --- | --- |
-| subscriptionID | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| subscriptionId | <code>number</code> | The specific user subscription ID. |
 
 **Example**  
 ```js
@@ -271,4 +291,4 @@ const custom = await client.generatePayLink({
 ```
 ---
 
-Documentation generated on **Sun, 29 Dec 2019 09:25:36 GMT**
+Documentation generated on **Mon, 13 Apr 2020 02:27:43 GMT**

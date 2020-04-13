@@ -10,19 +10,19 @@ class PaddleSDK {
 	/**
 	 * @class PaddleSDK
 	 * @typicalname client
-	 * @param {string} vendorID - The vendor ID for a Paddle account
-	 * @param {string} apiKey - The API key for a Paddle account
+	 * @param {string} vendorId - The vendor ID for a Paddle account
+	 * @param {string} authCode - The Auth Code for a Paddle account
 	 * @param {string} [publicKey] - The public key for a Paddle account used to verify webhooks, only required for `verifyWebhookData`
 	 * @param {object} [options]
 	 * @param {string} [options.server=vendors.paddle.com/api/2.0] - The server URL prefix for all requests
 	 *
 	 * @example
-	 * const client = new PaddleSDK('your-vendor-id', 'your-unique-api-key');
-	 * const client = new PaddleSDK('your-vendor-id', 'your-unique-api-key', 'your-public-key');
+	 * const client = new PaddleSDK('your-vendor-id', 'your-auth-code');
+	 * const client = new PaddleSDK('your-vendor-id', 'your-auth-code', 'your-public-key');
 	 */
-	constructor(vendorID, apiKey, publicKey, options) {
-		this.vendorID = vendorID || 'MISSING';
-		this.apiKey = apiKey || 'MISSING';
+	constructor(vendorId, authCode, publicKey, options) {
+		this.vendorId = vendorId || 'MISSING';
+		this.authCode = authCode || 'MISSING';
 		this.publicKey = publicKey || 'MISSING';
 		this.server = (options && options.server) || SERVER_URL;
 	}
@@ -31,8 +31,8 @@ class PaddleSDK {
 	 * Execute a HTTP request
 	 *
 	 * @private
+	 * @param path
 	 * @param {string} url - url to do request
-	 * @param {object} options
 	 * @param {object} [options.body] - body parameters / object
 	 * @param {object} [options.headers] - header parameters
 	 * @param {boolean} [options.form] - form parameter (ref: got package)
@@ -52,7 +52,6 @@ class PaddleSDK {
 		if (json) {
 			options.json = fullBody;
 		}
-		// console.log('options', options);
 
 		return got(url, options)
 			.json()
@@ -73,8 +72,8 @@ class PaddleSDK {
 
 	_getDefaultBody() {
 		return {
-			vendor_id: this.vendorID,
-			vendor_auth_code: this.apiKey,
+			vendor_id: this.vendorId,
+			vendor_auth_code: this.authCode,
 		};
 	}
 
@@ -87,7 +86,7 @@ class PaddleSDK {
 	_getDefaultHeaders(additionalHeaders) {
 		return Object.assign(
 			{
-				'User-Agent': `paddle-sdk/${pkg.version} (${pkg.repository.url})`,
+				'User-Agent': `paddle-sdk-dplnk/${pkg.version} (${pkg.repository.url})`,
 			},
 			additionalHeaders || {}
 		);
@@ -111,16 +110,16 @@ class PaddleSDK {
 	 * Get the current list of coupons for a product
 	 *
 	 * @method
-	 * @param {number} productID
+	 * @param {number} productId - The specific product/subscription ID.
 	 * @returns {Promise}
 	 * @fulfil {object} - The coupons list
 	 *
 	 * @example
 	 * const coupons = await client.getProductCoupons(123);
 	 */
-	getProductCoupons(productID) {
+	getProductCoupons(productId) {
 		return this._request('/product/list_coupons', {
-			body: { product_id: productID },
+			body: { product_id: productId },
 		});
 	}
 
@@ -128,16 +127,16 @@ class PaddleSDK {
 	 * Get the current list of plans for a subscription
 	 *
 	 * @method
-	 * @param {number} productID
+	 * @param {number} [plan] - Filter: The product/plan ID
 	 * @returns {Promise}
 	 * @fulfil {object} - The plans list
 	 *
 	 * @example
 	 * const plans = await client.getProductPlans(123);
 	 */
-	getProductPlans(productID) {
+	getProductPlans(plan) {
 		return this._request('/subscription/plans', {
-			body: { product_id: productID },
+			body: { plan },
 		});
 	}
 
@@ -145,16 +144,29 @@ class PaddleSDK {
 	 * Get the current list of users for a subscription plan
 	 *
 	 * @method
-	 * @param {number} planID
+	 * @param [filter]
+	 * @param {number} [filter.subscriptionId] - A specific user subscription ID
+	 * @param {number} [filter.planId] - The subscription plan ID
+	 * @param {'active' | 'past due' | 'trialling' | 'paused'} [filter.state] - The user subscription status.
+	 * Returns all active, past due, trialling and paused subscription plans if not specified.
+	 * @param [pagination]
+	 * @param {number} [pagination.page] - Paginate return results
+	 * @param {number} [pagination.resultPerPage] - Number of subscription records to return per page.
 	 * @returns {Promise}
 	 * @fulfil {object} - The users list
 	 *
 	 * @example
-	 * const users = await client.getPlanUsers(123);
+	 * const users = await client.getPlanUsers({subscriptionId: 123});
 	 */
-	getPlanUsers(planID) {
+	getPlanUsers(filter, pagination) {
 		return this._request('/subscription/users', {
-			body: { plan: planID },
+			body: {
+				subscriptionId: filter.subscriptionId,
+				planId: filter.planId,
+				state: filter.state,
+				page: pagination.page,
+				result_per_page: pagination.resultPerPage,
+			},
 		});
 	}
 
@@ -162,16 +174,29 @@ class PaddleSDK {
 	 * Get the list of payments for a subscription plan
 	 *
 	 * @method
-	 * @param {number} planID
+	 * @param [filter]
+	 * @param {number} [filter.subscriptionId]
+	 * @param {number} [filter.plan]
+	 * @param {0 | 1} [filter.isPaid] - Filter: Payment is paid (0 = No, 1 = Yes)
+	 * @param {string} [filter.from] - Filter: Payments starting from (date in format YYYY-MM-DD)
+	 * @param {string} [filter.to] - Filter: Payments up to (date in format YYYY-MM-DD)
+	 * @param {boolean} [filter.isOneOffCharge]
 	 * @returns {Promise}
 	 * @fulfil {object} - The payments list
 	 *
 	 * @example
 	 * const payments = await client.getPlanPayments(123);
 	 */
-	getPlanPayments(planID) {
+	getPlanPayments(filter) {
 		return this._request('/subscription/payments', {
-			body: { plan: planID },
+			body: {
+				subscription_id: filter.subscriptionId,
+				plan: filter.plan,
+				is_paid: filter.isPaid,
+				from: filter.from,
+				to: filter.to,
+				is_one_off_charge: filter.isOneOffCharge,
+			},
 		});
 	}
 
@@ -179,69 +204,82 @@ class PaddleSDK {
 	 * Get the list of webhooks history
 	 *
 	 * @method
+	 * @param [pagination]
+	 * @param {number} [pagination.page] - Paginate returned results
+	 * @param {string} [pagination.alertPerPage] - Number of webhook records to return per page
+	 * @param {string} [pagination.queryHead] The date-time from which to begin the history
 	 * @returns {Promise}
 	 * @fulfil {object} - The webhooks history list
 	 *
 	 * @example
 	 * const webhooksHistory = await client.getWebhooksHistory();
 	 */
-	getWebhooksHistory() {
-		return this._request('/alert/webhooks');
+	getWebhooksHistory(pagination) {
+		return this._request('/alert/webhooks', {
+			body: {
+				page: pagination.page,
+				alerts_per_page: pagination.alertPerPage,
+				query_head: pagination.queryHead,
+			},
+		});
 	}
 
 	/**
 	 * Get the list of transations for a resource
 	 *
 	 * @private
+	 * @param {string} entity - Filter: Entity type of the id
+	 * @param {string} id - Filter: ID number for the specified entity
 	 * @returns {Promise}
 	 * @fulfil {object} - The transations list
 	 */
-	_getTransactions(type, id) {
-		return this._request(`/${type}/${id}/transactions`);
+	_getTransactions(entity, id) {
+		return this._request(`/${entity}/${id}/transactions`);
 	}
 
 	/**
 	 * Get the list of transations for a user
 	 *
 	 * @method
-	 * @param {number} userID
+	 * @param {number} userId
 	 * @returns {Promise}
 	 * @fulfil {object} - The transations list
 	 *
 	 * @example
 	 * const userTransactions = await client.getUserTransactions(123);
 	 */
-	getUserTransactions(userID) {
-		return this._getTransactions('users', userID);
+	getUserTransactions(userId) {
+		return this._getTransactions('users', `${userId}`);
 	}
 
 	/**
 	 * Get the list of transations for a subscription
 	 *
 	 * @method
-	 * @param {number} subscriptionID
+	 * @param {number} subscriptionId
 	 * @returns {Promise}
 	 * @fulfil {object} - The transations list
 	 *
 	 * @example
 	 * const subscriptionTransactions = await client.getSubscriptionTransactions(123);
 	 */
-	getSubscriptionTransactions(subscriptionID) {
-		return this._getTransactions('subscription', subscriptionID);
+	getSubscriptionTransactions(subscriptionId) {
+		return this._getTransactions('subscription', `${subscriptionId}`);
 	}
+
 	/**
 	 * Get the list of transations for an order
 	 *
 	 * @method
-	 * @param {number} orderID
+	 * @param {number} orderId
 	 * @returns {Promise}
 	 * @fulfil {object} - The transations list
 	 *
 	 * @example
 	 * const orderTransactions = await client.getOrderTransactions(123);
 	 */
-	getOrderTransactions(orderID) {
-		return this._getTransactions('order', orderID);
+	getOrderTransactions(orderId) {
+		return this._getTransactions('order', `${orderId}`);
 	}
 
 	/**
@@ -256,7 +294,7 @@ class PaddleSDK {
 	 * const checkoutTransactions = await client.getCheckoutTransactions(123);
 	 */
 	getCheckoutTransactions(checkoutID) {
-		return this._getTransactions('checkout', checkoutID);
+		return this._getTransactions('checkout', `${checkoutID}`);
 	}
 
 	/**
@@ -270,7 +308,7 @@ class PaddleSDK {
 	 * @return {boolean}
 	 *
 	 * @example
-	 * const client = new PaddleSDK('your-vendor-id', 'your-unique-api-key', 'your-public-key');
+	 * const client = new PaddleSDK('your-vendor-id', 'your-auth-code', 'your-public-key');
 	 *
 	 * // inside an Express handler which uses express.bodyParser middleware
 	 * const isVerified = client.verifyWebhookData(req.body);
@@ -301,12 +339,13 @@ class PaddleSDK {
 		}
 	}
 
+	// TODO: fix params
 	/**
 	 * Update (upgrade/downgrade) the plan of a subscription
 	 *
 	 * @method
-	 * @param {number} subscriptionID
-	 * @param {number} planID
+	 * @param {number} subscriptionId
+	 * @param {number} planId
 	 * @param {boolean} prorate
 	 * @returns {Promise}
 	 * @fulfill {object} - The result of the operation
@@ -314,11 +353,11 @@ class PaddleSDK {
 	 * @example
 	 * const result = await client.updateSubscriptionPlan(123);
 	 */
-	updateSubscriptionPlan(subscriptionID, planID, prorate = false) {
+	updateSubscriptionPlan(subscriptionId, planId, prorate = false) {
 		return this._request('/subscription/users/update', {
 			body: {
-				subscription_id: subscriptionID,
-				plan_id: planID,
+				subscription_id: subscriptionId,
+				plan_id: planId,
 				prorate,
 			},
 		});
@@ -328,16 +367,16 @@ class PaddleSDK {
 	 * Cancels an active subscription
 	 *
 	 * @method
-	 * @param {number} subscriptionID
+	 * @param {number} subscriptionId - The specific user subscription ID.
 	 * @returns {Promise}
 	 * @fulfil {object} - The result of the operation
 	 *
 	 * @example
 	 * const result = await client.cancelSubscription(123);
 	 */
-	cancelSubscription(subscriptionID) {
+	cancelSubscription(subscriptionId) {
 		return this._request('/subscription/users_cancel', {
-			body: { subscription_id: subscriptionID },
+			body: { subscription_id: subscriptionId },
 		});
 	}
 

@@ -1,12 +1,12 @@
 {
-  "name": "paddle-sdk",
+  "name": "paddle-sdk-dplbk",
   "description": "The Paddle.com Node.js SDK",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "main": "sdk.js",
-  "author": "Valentin Agachi <github-com@agachi.name>",
+  "author": "Dmitry Dergunov <dmitry@dergunov.net>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/avaly/paddle-sdk"
+    "url": "https://github.com/dplnk/paddle-sdk"
   },
   "license": "MIT",
   "keywords": [
@@ -35,17 +35,17 @@
     "pretest": "yarn lint"
   },
   "dependencies": {
-    "got": "^10.2.0"
+    "got": "^10.7.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "husky": "^3.1.0",
-    "jest": "^24.9.0",
+    "husky": "^4.2.5",
+    "jest": "^25.3.0",
     "jsdoc-to-markdown": "^5.0.3",
-    "lint-staged": "^9.5.0",
-    "nock": "^11.7.0",
-    "prettier": "^1.19.1",
-    "standard-version": "^7.0.1",
+    "lint-staged": "^10.1.3",
+    "nock": "^12.0.3",
+    "prettier": "^2.0.4",
+    "standard-version": "^7.1.0",
     "validate-commit-msg": "^2.14.0"
   },
   "husky": {

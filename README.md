@@ -27,7 +27,7 @@ Using `Promise`:
 ```js
 const PaddleSDK = require('paddle-sdk');
 
-const client = new PaddleSDK('your-vendor-id-here', 'your-unique-api-key-here');
+const client = new PaddleSDK('your-vendor-id-here', 'your-auth-code-here');
 
 client.getProducts()
   .then(console.log)
@@ -41,7 +41,7 @@ Using `async`/`await`:
 const PaddleSDK = require('paddle-sdk');
 
 async function run() {
-  const client = new PaddleSDK('your-vendor-id-here', 'your-unique-api-key-here');
+  const client = new PaddleSDK('your-vendor-id-here', 'your-auth-code-here');
 
   const products = await client.getProducts();
   console.log(products);
@@ -61,8 +61,15 @@ See the JSDoc markdown documentation in [Documentation.md](Documentation.md).
 
 The change log can be found here: [CHANGELOG.md](CHANGELOG.md).
 
+## ToDo
+
+* Rewrite to typescript.
+* Add missing endpoint
+
 ## Authors and license
 
-Author: [Valentin Agachi](http://agachi.name/).
+Author: [Dmitry Dergunov](mailto:dmitry@dergunov.net).
 
-MIT License, see the included [License.md](License.md) file.
+Forked from: [Valentin Agachi](http://agachi.name/).
+
+MIT License, see the included [License.md](LICENSE.md) file.
