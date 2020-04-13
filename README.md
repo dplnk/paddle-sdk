@@ -1,8 +1,6 @@
 # Paddle.com Node.js SDK
 
-[![Travis branch](https://img.shields.io/travis/avaly/paddle-sdk/master.svg?style=flat-square)](https://travis-ci.org/avaly/paddle-sdk)
-[![NPM version](https://img.shields.io/npm/v/paddle-sdk.svg?style=flat-square)](https://www.npmjs.com/package/paddle-sdk)
-[![Dependencies](https://img.shields.io/david/avaly/paddle-sdk.svg?style=flat-square)](https://david-dm.org/avaly/paddle-sdk)
+[![NPM version](https://img.shields.io/npm/v/paddle-sdk-dplnk.svg?style=flat-square)](https://www.npmjs.com/package/paddle-sdk-dplnk)
 
 Welcome to the [Paddle.com](https://www.paddle.com/) Node.js SDK documentation.
 
@@ -11,13 +9,13 @@ Welcome to the [Paddle.com](https://www.paddle.com/) Node.js SDK documentation.
 Install the SDK module using `npm`:
 
 ```
-$ npm install paddle-sdk
+$ npm install paddle-sdk-dplnk
 ```
 
 or using `yarn`:
 
 ```
-$ yarn add paddle-sdk
+$ yarn add paddle-sdk-dplnk
 ```
 
 ## Usage
@@ -25,7 +23,7 @@ $ yarn add paddle-sdk
 Using `Promise`:
 
 ```js
-const PaddleSDK = require('paddle-sdk');
+const PaddleSDK = require('paddle-sdk-dplnk');
 
 const client = new PaddleSDK('your-vendor-id-here', 'your-auth-code-here');
 
@@ -38,7 +36,7 @@ client.getProducts()
 Using `async`/`await`:
 
 ```js
-const PaddleSDK = require('paddle-sdk');
+const PaddleSDK = require('paddle-sdk-dplnk');
 
 async function run() {
   const client = new PaddleSDK('your-vendor-id-here', 'your-auth-code-here');

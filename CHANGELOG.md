@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/dplnk/paddle-sdk/compare/v2.1.0...v2.2.1) (2020-04-13)
+
+
+### Bug Fixes
+
+* fix PaddleAPI params ([3b99c5a](https://github.com/dplnk/paddle-sdk/commit/3b99c5a42421a8ea9e5b2c742b52ebd9dfe0be1d))
+
 ## [2.2.0](https://github.com/dplnk/paddle-sdk/compare/v2.1.0...v2.2.0) (2020-04-13)
 
 ### Fixes

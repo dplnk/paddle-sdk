@@ -134,7 +134,7 @@ class PaddleSDK {
 	 * @example
 	 * const plans = await client.getProductPlans(123);
 	 */
-	getProductPlans(plan) {
+	getSubscriptionPlans(plan) {
 		return this._request('/subscription/plans', {
 			body: { plan },
 		});
@@ -158,14 +158,14 @@ class PaddleSDK {
 	 * @example
 	 * const users = await client.getPlanUsers({subscriptionId: 123});
 	 */
-	getPlanUsers(filter, pagination) {
+	getSubscriptionUsers(filter, pagination) {
 		return this._request('/subscription/users', {
 			body: {
-				subscriptionId: filter.subscriptionId,
-				planId: filter.planId,
-				state: filter.state,
-				page: pagination.page,
-				result_per_page: pagination.resultPerPage,
+				subscriptionId: filter?.subscriptionId,
+				planId: filter?.planId,
+				state: filter?.state,
+				page: pagination?.page,
+				result_per_page: pagination?.resultPerPage,
 			},
 		});
 	}
@@ -187,15 +187,15 @@ class PaddleSDK {
 	 * @example
 	 * const payments = await client.getPlanPayments(123);
 	 */
-	getPlanPayments(filter) {
+	getSubscriptionPayments(filter) {
 		return this._request('/subscription/payments', {
 			body: {
-				subscription_id: filter.subscriptionId,
-				plan: filter.plan,
-				is_paid: filter.isPaid,
-				from: filter.from,
-				to: filter.to,
-				is_one_off_charge: filter.isOneOffCharge,
+				subscription_id: filter?.subscriptionId,
+				plan: filter?.plan,
+				is_paid: filter?.isPaid,
+				from: filter?.from,
+				to: filter?.to,
+				is_one_off_charge: filter?.isOneOffCharge,
 			},
 		});
 	}
@@ -217,9 +217,9 @@ class PaddleSDK {
 	getWebhooksHistory(pagination) {
 		return this._request('/alert/webhooks', {
 			body: {
-				page: pagination.page,
-				alerts_per_page: pagination.alertPerPage,
-				query_head: pagination.queryHead,
+				page: pagination?.page,
+				alerts_per_page: pagination?.alertPerPage,
+				query_head: pagination?.queryHead,
 			},
 		});
 	}

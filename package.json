@@ -1,8 +1,8 @@
 {
-  "name": "paddle-sdk-dplbk",
+  "name": "paddle-sdk-dplnk",
   "description": "The Paddle.com Node.js SDK",
-  "version": "2.2.0",
-  "main": "sdk.js",
+  "version": "2.2.2",
+  "main": "sdk.ts",
   "author": "Dmitry Dergunov <dmitry@dergunov.net>",
   "repository": {
     "type": "git",
@@ -20,11 +20,11 @@
     "node": ">=10.0.0"
   },
   "files": [
-    "sdk.js",
+    "sdk.ts",
     "lib/"
   ],
   "scripts": {
-    "docs": "jsdoc2md --partial docs/main.hbs --helper docs/helpers.js --files sdk.js > Documentation.md",
+    "docs": "jsdoc2md --partial docs/main.hbs --helper docs/helpers.js --files sdk.ts > Documentation.md",
     "lint": "eslint . --cache --fix --ignore-pattern '!.eslintrc.js'",
     "pretty": "prettier --write --list-different \"**/*.js\"",
     "release": "yarn docs && git add Documentation.md && standard-version -a",
@@ -35,7 +35,8 @@
     "pretest": "yarn lint"
   },
   "dependencies": {
-    "got": "^10.7.0"
+    "got": "^10.7.0",
+    "typescript": "^3.8.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
