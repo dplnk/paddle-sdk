@@ -1,4 +1,6 @@
+// @ts-ignore
 const crypto = require('crypto');
+// TODO: use axios
 const got = require('got');
 
 const pkg = require('./package.json');
@@ -7,6 +9,11 @@ const serialize = require('./lib/serialize');
 const SERVER_URL = 'https://vendors.paddle.com/api/2.0';
 
 class PaddleSDK {
+	private readonly vendorId;
+	private readonly authCode;
+	private readonly publicKey;
+	private readonly server;
+
 	/**
 	 * @class PaddleSDK
 	 * @typicalname client
@@ -47,9 +54,11 @@ class PaddleSDK {
 			method: 'POST',
 		};
 		if (form) {
+			// @ts-ignore
 			options.form = fullBody;
 		}
 		if (json) {
+			// @ts-ignore
 			options.json = fullBody;
 		}
 
@@ -329,6 +338,7 @@ class PaddleSDK {
 		const serialized = serialize(sorted);
 
 		try {
+			// @ts-ignore
 			const verifier = crypto.createVerify('sha1');
 			verifier.write(serialized);
 			verifier.end();
